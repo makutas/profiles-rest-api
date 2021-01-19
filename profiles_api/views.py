@@ -1,8 +1,12 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from profiles_api import serializers
 from rest_framework import viewsets
+from rest_framework.authentication import TokenAuthentication
+
+from profiles_api import serializers
+from profiles_api import models
+from profiles_api import permissions
 
 
 class HelloApiView(APIView):
@@ -35,7 +39,7 @@ class HelloApiView(APIView):
         # Since serializer can validate data, we can in this case check if name is no
         # more then 10 characters in length by using isvalid class.
         if serializer.is_valid():
-            name = serializer.validated_data.get('name') # we get our name if it is valid in length
+            name = serializer.validated_data.get('name')  # we get our name if it is valid in length
             message = f'Hello {name}'
             return Response({'message': message})
         # if input is however not valid we return 400
@@ -109,3 +113,11 @@ class HelloViewSet(viewsets.ViewSet):
     def destroy(self, request, pk=None):
         """Removing an object"""
         return Response({'http_method': 'DELETE'})
+
+
+class UserProfileViewSet(viewsets.ModelViewSet):
+    """Handle creating and updating profiles"""
+    serializer_class = serializers.UserProfileSerializer
+    queryset = models.UserProfile.objects.all()
+    authentication_classes = (TokenAuthentication,)  # create this as a tuple therefore ','
+    permission_classes = (permissions.UpdateOwnProfile,)  # checks the has_object_permissions

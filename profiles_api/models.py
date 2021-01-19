@@ -8,10 +8,11 @@ class UserProfileManager(BaseUserManager):
     """This is manager for user profiles since we have modified the user model
     we need to tell django how to interact with it in order to create users.
     By default django expect the name but we added email"""
+
     def create_user(self, email, name, password=None):
         """Create a new user profile"""
         if not email:
-            raise ValueError('Users must have an email address')
+            raise ValueError('User must have an email address')
         email = self.normalize_email(email)
         user = self.model(email=email, name=name)
         """Creates a new model that UserProfileManager is representing"""
@@ -28,6 +29,7 @@ class UserProfileManager(BaseUserManager):
         user.is_superuser = True
         user.is_staff = True
         user.save(using=self._db)
+
         return user
 
 
@@ -48,6 +50,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     to be an email since we want the user to be identified by an email + password"""
     REQUIRED_FIELDS = ['name']
     """This is a required field for a user to specify / email is by default required"""
+
     def get_full_name(self):
         """Retrieve full name of user"""
         return self.name
@@ -59,4 +62,3 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         """Return string representation of user"""
         return self.email
-
