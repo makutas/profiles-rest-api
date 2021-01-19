@@ -8,6 +8,7 @@ router.register('profile', views.UserProfileViewSet)
 # no need to specify base name here
 # because we have a queryset defined
 # django can figure out the model name that is assigned to it
+router.register('feed', views.UserProfilesFeedViewSet)
 
 urlpatterns = [
     path('hello-view/', views.HelloApiView.as_view()),

@@ -43,3 +43,19 @@ class UserProfileSerializer(serializers.ModelSerializer):
             instance.set_password(password)
 
         return super().update(instance, validated_data)
+
+
+class ProfileFeedItemSerializer(serializers.ModelSerializer):
+    """Serializes profile feed items"""
+
+    class Meta:
+        model = models.ProfileFeedItem
+        fields = ('id', 'user_profile', 'status_text', 'created_on')
+        # id and created_on will be automatically read only status
+        # we odnt want user_profile to be able to change also, security risk
+        # so we need to change it - see who created a text input
+        extra_kwargs = {
+            'user_profile': {
+                'read_only': True
+            }
+        }
